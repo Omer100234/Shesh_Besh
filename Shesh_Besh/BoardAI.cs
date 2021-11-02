@@ -71,7 +71,7 @@ namespace Shesh_Besh
             yend -= 20;
             this.p.Color = Color.Black;
             canvas.DrawRect(xstart, ystart, xend, yend, this.p);
-
+            // this is my try
             xstart = 40;
             ystart = canvas.Height * 13 / 14 + 3;
             xend = canvas.Width / 5 -40;
