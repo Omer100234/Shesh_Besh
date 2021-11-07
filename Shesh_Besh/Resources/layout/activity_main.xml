@@ -6,17 +6,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#cccccc">
+    android:background="@drawable/galaxy"
+    >
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:layout_marginRight="100dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="20dp"
-        android:background="#ffffff"/>
+        android:background="@drawable/backgammon"/>
     <Button
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="60dp"
         android:layout_marginRight="100dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="50dp"
@@ -25,16 +26,16 @@
         android:id="@+id/bt1"/>
     <Button
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="60dp"
         android:layout_marginRight="100dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="50dp"
         android:text="play vs Friend"
-        android:backgroundTint="#ffffff"
+
         android:id="@+id/bt2"/>
     <Button
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="60dp"
         android:layout_marginRight="100dp"
         android:layout_marginLeft="100dp"
         android:layout_marginTop="50dp"
