@@ -65,10 +65,15 @@
     <Compile Include="ba1Activity.cs" />
     <Compile Include="Board1v1.cs" />
     <Compile Include="BoardAI.cs" />
+    <Compile Include="Cell.cs" />
     <Compile Include="LeaderbActivity.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="PauseRect.cs" />
+    <Compile Include="Rectangle.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RollRect.cs" />
+    <Compile Include="Stone.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -124,6 +129,12 @@
     <AndroidResource Include="Resources\layout\b1v1Layout.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\raw\song.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\raw\dice.mp3" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
