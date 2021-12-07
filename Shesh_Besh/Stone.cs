@@ -15,13 +15,15 @@ namespace Shesh_Besh
     class Stone
     {
         private Color color;
-        private int posX;
-        private int posY;
+        private int posX, lastPosX;
+        private int posY, lastPosY;
         public Stone(Color c, int posX, int posY)
         {
             this.color = c;
             this.posX = posX;
             this.posY = posY;
+            this.lastPosX = posX;
+            this.lastPosY = posY;
         }
 
         public Color GetColor()
@@ -55,5 +57,13 @@ namespace Shesh_Besh
             canvas.DrawCircle(posX, posY, 20, p);
         }
 
+        public bool didUserTouchMe(int otherX, int otherY)
+        {
+            if ((Math.Sqrt(Math.Pow(this.posX - otherX, 2) + Math.Pow(this.posY - otherY, 2)) < 20))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

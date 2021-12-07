@@ -24,9 +24,11 @@ namespace Shesh_Besh
         RollRect r1Roll, r2Roll;
         int n1, n2;
         char turn;
+        int theIndexOfTheChosenTriangle;
         Cell[] board;
         Rectangle[] myMenu;
         Stone[] stones;
+        
         // checks for one time used functions 
         bool isSet;
 
@@ -371,6 +373,25 @@ namespace Shesh_Besh
 
             for (int i=0;i<24;i++)
             {
+                if(i==theIndexOfTheChosenTriangle)
+                {
+                    Point ptp1, ptp2;
+                    Point ptp3;
+                    if (i<12)
+                    {
+                        ptp1 = new Point(0, board[i].getP1().Y - 5);
+                        ptp2 = new Point(0, board[i].getP2().Y + 5);
+                        ptp3 = new Point(board[i].getP3().X + 5, board[i].getP3().Y);
+                        
+                    }
+                    else
+                    {
+                        ptp1 = new Point(canvas.Width, board[i].getP1().Y - 5);
+                        ptp2 = new Point(canvas.Width, board[i].getP2().Y + 5);
+                        ptp3 = new Point(board[i].getP3().X - 5, board[i].getP3().Y);
+                    }
+                    drawTriangle(ptp1, ptp2, ptp3, canvas, Color.Pink);
+                }
                 drawTriangle(board[i].getP1(), board[i].getP2(), board[i].getP3(), canvas, board[i].getColor());
             }
 
@@ -521,8 +542,16 @@ namespace Shesh_Besh
 
         public override bool OnTouchEvent(MotionEvent e)
         {
+
             if (MotionEventActions.Down == e.Action)
             {
+                for (int i=0;i<24;i++)
+                {
+                    if(board[i].didUserTouchMe((int)e.GetX(),(int) e.GetY()))
+                    {
+                        theIndexOfTheChosenTriangle = i;
+                    }
+                }
                 if (r1Pause.didUserTouchMe((int)e.GetX(), (int)e.GetY()))
                 {
                     this.r1Pause.activate(this.context);
@@ -557,11 +586,6 @@ namespace Shesh_Besh
             }
 
             return true;
-        }
-
-        private void drawmark(Canvas c)
-        {
-
         }
 
         public void checkNumsForPrint(Canvas c)

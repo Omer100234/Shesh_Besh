@@ -110,6 +110,20 @@ namespace Shesh_Besh
         {
             return this.c;
         }
+        public bool didUserTouchMe(int otherX, int otherY)
+        {
+            double m1 = (this.p1.Y - this.p3.Y) /  (double) (this.p1.X - this.p3.X);
+            double m2 = (this.p2.Y - this.p3.Y) / (double) (this.p2.X - this.p3.X);
+            bool isBelowp1p3 = otherY < m1 * otherX - m1 * this.p1.X + this.p1.Y;
+            bool isAbovep2p3 = otherY > m2 * otherX - m2 * this.p2.X + this.p2.Y;
+            if (isAbovep2p3 && isBelowp1p3)
+            {
+                return true;
+            }
+            return false;
+
+        }
+
 
     }
 }
