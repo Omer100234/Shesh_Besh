@@ -14,18 +14,20 @@ namespace Shesh_Besh
 {
     class Stone
     {
+        private Color ogColor;
         private Color color;
         private int posX, lastPosX;
         private int posY, lastPosY;
         public Stone(Color c, int posX, int posY)
         {
             this.color = c;
+            this.ogColor = c;
             this.posX = posX;
             this.posY = posY;
             this.lastPosX = posX;
             this.lastPosY = posY;
         }
-
+        
         public Color GetColor()
         {
             return this.color;
@@ -61,8 +63,10 @@ namespace Shesh_Besh
         {
             if ((Math.Sqrt(Math.Pow(this.posX - otherX, 2) + Math.Pow(this.posY - otherY, 2)) < 20))
             {
+                this.color = Color.Pink;
                 return true;
             }
+            this.color = ogColor;
             return false;
         }
     }

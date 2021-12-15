@@ -29,6 +29,8 @@ namespace Shesh_Besh
             
         }
 
+       
+
         public Stack<Stone> getStack()
         {
             return this.stack;
@@ -44,10 +46,29 @@ namespace Shesh_Besh
             this.rol = c;
         }
 
+        public Stone pullStone()
+        {
+            Stone s = this.stack.Pop();
+            if (this.stack.Count == 0)
+            {
+                this.state = 'e';
+            }
+            if (this.rol == 'l')
+            {
+                this.minheight -= 50;
+            }
+            else
+            {
+                this.minheight += 50;
+            }
+            return s;
+            
+        }
+
         public void addStone(Stone s)
         {
             stack.Push(s);
-            if (s.GetColor() == Color.Black)
+            if (s.GetColor() == Color.Orange)
             {
                 this.state = 'b';
             }
@@ -67,6 +88,10 @@ namespace Shesh_Besh
             }
         }
 
+        public char getState()
+        {
+            return this.state;
+        }
         public void setMinHeight(int x)
         {
             this.minheight = x;
@@ -114,8 +139,9 @@ namespace Shesh_Besh
         {
             double m1 = (this.p1.Y - this.p3.Y) /  (double) (this.p1.X - this.p3.X);
             double m2 = (this.p2.Y - this.p3.Y) / (double) (this.p2.X - this.p3.X);
-            bool isBelowp1p3 = otherY < m1 * otherX - m1 * this.p1.X + this.p1.Y;
-            bool isAbovep2p3 = otherY > m2 * otherX - m2 * this.p2.X + this.p2.Y;
+            bool isBelowp1p3 = otherY > m1 * otherX - m1 * this.p1.X + this.p1.Y;
+            bool isAbovep2p3 = otherY < m2 * otherX - m2 * this.p2.X + this.p2.Y;
+            
             if (isAbovep2p3 && isBelowp1p3)
             {
                 return true;
