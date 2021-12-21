@@ -28,16 +28,19 @@ namespace Shesh_Besh
         Cell[] board;
         Rectangle[] myMenu;
         Stone[] stones;
-        
+        Cell blackPrison, whitePrison;
         // checks for one time used functions 
         bool isSet;
         bool didThePlayHappenInThisVeriationOfTheLoop;
         bool didUserChooseWhereToPlayFrom;
         bool areTheCubesThrown, isC1Played, isC2played;
+        bool isBlackEaten, isWhiteEaten;
 
 
         public Board1v1(Context context, char igs, Color c1, Color c2) : base(context)
         {
+            this.isWhiteEaten = false;
+            this.isBlackEaten = false;
             this.theIndexOfTheChosenTriangle = 100;
             this.didUserChooseWhereToPlayFrom = false;
             this.isC1Played = false;
@@ -84,10 +87,9 @@ namespace Shesh_Besh
             }
             this.p.Color = Color.BurlyWood;
             canvas.DrawRect(0, 0, canvas.Width, canvas.Height, this.p);
-            if (this.theIndexOfTheChosenTriangle >= 0 && this.theIndexOfTheChosenTriangle <= 23)
-            {
+            
                 highlighter(canvas);
-            }
+           
             drawBoard(canvas);
             drawMenu(canvas);
             drawStones(canvas);
@@ -100,6 +102,26 @@ namespace Shesh_Besh
 
         public void highlighter(Canvas canvas)
         {
+            // white prison index will be 31
+            if (theIndexOfTheChosenTriangle==31)
+            {
+                Point ptp1, ptp2, ptp3;
+                ptp1 = new Point(canvas.Width, whitePrison.getP1().Y - 5);
+                ptp2 = new Point(canvas.Width, whitePrison.getP2().Y + 5);
+                ptp3 = new Point(whitePrison.getP3().X - 5, whitePrison.getP3().Y);
+                drawTriangle(ptp1, ptp2, ptp3, canvas, Color.Green);
+            }
+
+            //black prison index will be 32
+            // white prison index will be 31
+            if (theIndexOfTheChosenTriangle == 32)
+            {
+                Point ptp1, ptp2, ptp3;
+                ptp1 = new Point(0, whitePrison.getP1().Y - 5);
+                ptp2 = new Point(0, whitePrison.getP2().Y + 5);
+                ptp3 = new Point(whitePrison.getP3().X + 5, whitePrison.getP3().Y);
+                drawTriangle(ptp1, ptp2, ptp3, canvas, Color.Aqua);
+            }
             for (int i = 0; i < 24; i++)
             {
                 if (i == theIndexOfTheChosenTriangle)
@@ -124,6 +146,11 @@ namespace Shesh_Besh
 
             }
         }
+
+        
+        
+
+        
         private void drawStones(Canvas canvas)
         {
             for(int i=0;i<stones.Length;i++)
@@ -148,7 +175,6 @@ namespace Shesh_Besh
                     if (alt == 2)
                     {
                         int yMid = (y + y2) / 2;
-                        //drawTriangle(0, y, 0, y2, x, yMid, canvas, this.c1);
                         Point p1 = new Point(0, y);
                         Point p2 = new Point(0, y2);
                         Point p3 = new Point(x, yMid);
@@ -163,7 +189,6 @@ namespace Shesh_Besh
                     else
                     {
                         int yMid = (y + y2) / 2;
-                        //drawTriangle(0, y, 0, y2, x, yMid, canvas, this.c2);
                         Point p1 = new Point(0, y);
                         Point p2 = new Point(0, y2);
                         Point p3 = new Point(x, yMid);
@@ -182,6 +207,15 @@ namespace Shesh_Besh
                     this.p.Color = Color.Black;
                     canvas.DrawLine(0, y, canvas.Width / 2, y, this.p);
                     canvas.DrawLine(0, y2, canvas.Width / 2, y2, this.p);
+                    Point p1 = new Point(0, y);
+                    Point p2 = new Point(0, y2);
+                    int yMid = (y + y2) / 2;
+                    Point p3 = new Point(x, yMid);
+                    blackPrison = new Cell();
+                    blackPrison.setCellY(yMid);
+                    blackPrison.setPoints(p1, p2, p3);
+                    blackPrison.setMinHeight(25);
+                    blackPrison.setRol('l');
 
                 }
                 if (i > 7)
@@ -270,6 +304,15 @@ namespace Shesh_Besh
                     this.p.Color = Color.Black;
                     canvas.DrawLine(canvas.Width, y, canvas.Width / 2, y, this.p);
                     canvas.DrawLine(canvas.Width, y2, canvas.Width / 2, y2, this.p);
+                    Point p1 = new Point(canvas.Width, y);
+                    Point p2 = new Point(canvas.Width, y2);
+                    int yMid = (y + y2) / 2;
+                    Point p3 = new Point(x, yMid);
+                    whitePrison = new Cell();
+                    whitePrison.setCellY(yMid);
+                    whitePrison.setPoints(p1, p2, p3);
+                    whitePrison.setMinHeight(canvas.Width - 25);
+                    whitePrison.setRol('r');
                 }
                 if (i > 7)
                 {
@@ -410,35 +453,8 @@ namespace Shesh_Besh
 
             for (int i = 0; i < 24; i++)
             {
-                /*if (i == theIndexOfTheChosenTriangle)
-                {
-                    Point ptp1, ptp2, ptp3;
-                    if (i < 12)
-                    {
-                        ptp1 = new Point(0, board[i].getP1().Y - 5);
-                        ptp2 = new Point(0, board[i].getP2().Y + 5);
-                        ptp3 = new Point(board[i].getP3().X + 5, board[i].getP3().Y);
-
-                    }
-                    else
-                    {
-                        ptp1 = new Point(canvas.Width, board[i].getP1().Y - 5);
-                        ptp2 = new Point(canvas.Width, board[i].getP2().Y + 5);
-                        ptp3 = new Point(board[i].getP3().X - 5, board[i].getP3().Y);
-                    }
-                    drawTriangle(ptp1, ptp2, ptp3, canvas, Color.Aqua);
-
-
-
-                    
-                }*/
                 drawTriangle(board[i].getP1(), board[i].getP2(), board[i].getP3(), canvas, board[i].getColor());
-
             }
-
-
-
-            
         }
 
         private void drawTriangle(Point pa, Point pb, Point pc, Canvas canvas, Color c)
@@ -542,72 +558,176 @@ namespace Shesh_Besh
                
 
             }
-            if (this.turn == 'w' && areTheCubesThrown && !didUserChooseWhereToPlayFrom && !didThePlayHappenInThisVeriationOfTheLoop)
+            if (!isWhiteEaten && this.turn == 'w')
             {
-                for (int i = 0; i < 24; i++)
+                if (this.turn == 'w' && areTheCubesThrown && !didUserChooseWhereToPlayFrom && !didThePlayHappenInThisVeriationOfTheLoop)
                 {
-                    if (board[i].didUserTouchMe((int)e.GetX(), (int)e.GetY()) && board[i].getState() == 'w' && e.Action == MotionEventActions.Down)
+                    for (int i = 0; i < 24; i++)
                     {
-                        theIndexOfTheChosenTriangle = i;
-                        didUserChooseWhereToPlayFrom = true;
-                        didThePlayHappenInThisVeriationOfTheLoop = true;
-                    }
-                }
-                
-
-            }
-
-            if (this.turn == 'w' && didUserChooseWhereToPlayFrom && !didThePlayHappenInThisVeriationOfTheLoop)
-            {
-                for (int i = 0; i < 24; i++)
-                {
-                    if (board[i].didUserTouchMe((int)e.GetX(), (int)e.GetY()))
-                    {
-                        if ( i == theIndexOfTheChosenTriangle && !didThePlayHappenInThisVeriationOfTheLoop && e.Action == MotionEventActions.Down)
+                        if (board[i].didUserTouchMe((int)e.GetX(), (int)e.GetY()) && board[i].getState() == 'w' && e.Action == MotionEventActions.Down)
                         {
-                            didUserChooseWhereToPlayFrom = false;
-                            theIndexOfTheChosenTriangle = 100;
+                            theIndexOfTheChosenTriangle = i;
+                            didUserChooseWhereToPlayFrom = true;
                             didThePlayHappenInThisVeriationOfTheLoop = true;
                         }
-                        else if (i == theIndexAfterTheMoveWithCube(theIndexOfTheChosenTriangle, n1, this.turn) && !isC1Played)
+                    }
+
+
+                }
+
+                if (this.turn == 'w' && didUserChooseWhereToPlayFrom && !didThePlayHappenInThisVeriationOfTheLoop)
+                {
+                    for (int i = 0; i < 24; i++)
+                    {
+                        if (board[i].didUserTouchMe((int)e.GetX(), (int)e.GetY()))
                         {
-                            board[i].addStone(board[theIndexOfTheChosenTriangle].pullStone());
-                            isC1Played = true;
-                            didUserChooseWhereToPlayFrom = false;
-                            theIndexOfTheChosenTriangle = 100;
-                            if (isC1Played && isC2played)
+                            if (i == theIndexOfTheChosenTriangle && !didThePlayHappenInThisVeriationOfTheLoop && e.Action == MotionEventActions.Down)
                             {
-                                isC1Played = false;
-                                isC2played = false;
-
-                                this.turn = 'b';
-                                theIndexOfTheChosenTriangle = 100;
                                 didUserChooseWhereToPlayFrom = false;
-                                areTheCubesThrown = false;
+                                theIndexOfTheChosenTriangle = 100;
+                                didThePlayHappenInThisVeriationOfTheLoop = true;
                             }
-                        }
-                        else if (i == theIndexAfterTheMoveWithCube(theIndexOfTheChosenTriangle, n2, this.turn) && !isC2played)
-                        {
-                            board[i].addStone(board[theIndexOfTheChosenTriangle].pullStone());
-                            isC2played = true;
-                            didUserChooseWhereToPlayFrom = false;
-                            theIndexOfTheChosenTriangle = 100;
-                            if (isC1Played && isC2played)
+                            else if (i == theIndexAfterTheMoveWithCube(theIndexOfTheChosenTriangle, n1, this.turn) && !isC1Played)
                             {
-                                isC1Played = false;
-                                isC2played = false;
+                                if (board[i].getState() == 'e' || board[i].getState() == 'w' || (board[i].getState() == 'b' && board[i].getStack().Count == 1))
+                                {
+                                    if (board[i].getState() == 'b' && board[i].getStack().Count == 1)
+                                    {
+                                        blackPrison.addStone(board[i].pullStone());
+                                        isBlackEaten = true;
+                                    }
+                                    board[i].addStone(board[theIndexOfTheChosenTriangle].pullStone());
+                                    isC1Played = true;
+                                    didUserChooseWhereToPlayFrom = false;
+                                    theIndexOfTheChosenTriangle = 100;
+                                    if (isC1Played && isC2played)
+                                    {
+                                        isC1Played = false;
+                                        isC2played = false;
 
-                                this.turn = 'b';
-                                theIndexOfTheChosenTriangle = 100;
-                                didUserChooseWhereToPlayFrom = false;
-                                areTheCubesThrown = false;
+                                        this.turn = 'b';
+                                        theIndexOfTheChosenTriangle = 100;
+                                        didUserChooseWhereToPlayFrom = false;
+                                        areTheCubesThrown = false;
+                                    }
+                                }
+
                             }
+                            else if (i == theIndexAfterTheMoveWithCube(theIndexOfTheChosenTriangle, n2, this.turn) && !isC2played)
+                            {
+                                if (board[i].getState() == 'e' || board[i].getState() == 'w' || (board[i].getState() == 'b' && board[i].getStack().Count == 1))
+                                {
+                                    if (board[i].getState() == 'b' && board[i].getStack().Count == 1)
+                                    {
+                                        blackPrison.addStone(board[i].pullStone());
+                                        isBlackEaten = true;
+                                    }
+                                    board[i].addStone(board[theIndexOfTheChosenTriangle].pullStone());
+                                    isC2played = true;
+                                    didUserChooseWhereToPlayFrom = false;
+                                    theIndexOfTheChosenTriangle = 100;
+                                    if (isC1Played && isC2played)
+                                    {
+                                        isC1Played = false;
+                                        isC2played = false;
+
+                                        this.turn = 'b';
+                                        theIndexOfTheChosenTriangle = 100;
+                                        didUserChooseWhereToPlayFrom = false;
+                                        areTheCubesThrown = false;
+                                    }
+                                }
+
+
+                            }
+
+
                         }
-
-
                     }
                 }
             }
+                if (isWhiteEaten && this.turn == 'w' && !didThePlayHappenInThisVeriationOfTheLoop)
+                {
+                    if (whitePrison.didUserTouchMe((int)e.GetX(), (int)e.GetY()) && !didUserChooseWhereToPlayFrom)
+                    {
+                        
+                        didUserChooseWhereToPlayFrom = true;
+                        didThePlayHappenInThisVeriationOfTheLoop = true;
+                        
+                        theIndexOfTheChosenTriangle = 31;
+                        if (theIndexOfTheChosenTriangle ==31)
+                        {
+                            Toast.MakeText(this.context, "it is 31", ToastLength.Short).Show();
+                        }
+                    }
+                    if(didUserChooseWhereToPlayFrom && !didThePlayHappenInThisVeriationOfTheLoop)
+                    {
+                        for (int i=18;i<24;i++)
+                        {
+                            if (board[i].didUserTouchMe((int)e.GetX(), (int)e.GetY()))
+                            {
+                                if (board[i].getState() == 'e' || board[i].getState() == 'w' || (board[i].getState() == 'b' && board[i].getStack().Count == 1))
+                                {
+                                    if (i == 24 - n1 && !isC1Played)
+                                    {
+                                        if (board[i].getState() == 'b' && board[i].getStack().Count == 1)
+                                        {
+                                            blackPrison.addStone(board[i].pullStone());
+                                            isBlackEaten = true;
+                                        }
+                                        board[i].addStone(whitePrison.pullStone());
+                                        isC1Played = true;
+                                        didUserChooseWhereToPlayFrom = false;
+                                        theIndexOfTheChosenTriangle = 100;
+                                        if (isC1Played && isC2played)
+                                        {
+                                            isC1Played = false;
+                                            isC2played = false;
+
+                                            this.turn = 'b';
+                                            theIndexOfTheChosenTriangle = 100;
+                                            didUserChooseWhereToPlayFrom = false;
+                                            areTheCubesThrown = false;
+                                        }
+                                        if (whitePrison.getStack().Count == 0)
+                                        {
+                                            isWhiteEaten = false;
+                                        }
+                                    }
+                                    if (i == 24 - n2 && !isC1Played)
+                                    {
+                                        if (board[i].getState() == 'b' && board[i].getStack().Count == 1)
+                                        {
+                                            blackPrison.addStone(board[i].pullStone());
+                                            isBlackEaten = true;
+                                        }
+                                        board[i].addStone(whitePrison.pullStone());
+                                        isC2played = true;
+                                        didUserChooseWhereToPlayFrom = false;
+                                        theIndexOfTheChosenTriangle = 100;
+                                        if (isC1Played && isC2played)
+                                        {
+                                            isC1Played = false;
+                                            isC2played = false;
+
+                                            this.turn = 'b';
+                                            theIndexOfTheChosenTriangle = 100;
+                                            didUserChooseWhereToPlayFrom = false;
+                                            areTheCubesThrown = false;
+                                        }
+                                        if (whitePrison.getStack().Count == 0)
+                                        {
+                                            isWhiteEaten = false;
+                                        }
+                                    }
+                                }
+                            
+                            }
+                        }
+                    }
+                }
+
+            
 
             // end of the check for the white turn ----------------------------------------------------------------------
             //start of the check of the black turn ----------------------------------------------------------------------
@@ -625,6 +745,7 @@ namespace Shesh_Besh
 
 
             }
+            
             if (this.turn == 'b' && areTheCubesThrown && !didUserChooseWhereToPlayFrom && !didThePlayHappenInThisVeriationOfTheLoop)
             {
                 for (int i = 0; i < 24; i++)
@@ -654,36 +775,52 @@ namespace Shesh_Besh
                         }
                         else if (i == theIndexAfterTheMoveWithCube(theIndexOfTheChosenTriangle, n1, this.turn)  && !isC1Played)
                         {
-                            board[i].addStone(board[theIndexOfTheChosenTriangle].pullStone());
-                            isC1Played = true;
-                            didUserChooseWhereToPlayFrom = false;
-                            theIndexOfTheChosenTriangle = 100;
-                            if (isC1Played && isC2played)
+                            if (board[i].getState() == 'e' || board[i].getState() == 'b' || (board[i].getState() == 'w' && board[i].getStack().Count == 1))
                             {
-                                isC1Played = false;
-                                isC2played = false;
-
-                                this.turn = 'w';
-                                theIndexOfTheChosenTriangle = 100;
+                                if (board[i].getState() == 'w' && board[i].getStack().Count == 1)
+                                {
+                                    whitePrison.addStone(board[i].pullStone());
+                                    isWhiteEaten = true;
+                                }
+                                board[i].addStone(board[theIndexOfTheChosenTriangle].pullStone());
+                                isC1Played = true;
                                 didUserChooseWhereToPlayFrom = false;
-                                areTheCubesThrown = false;
+                                theIndexOfTheChosenTriangle = 100;
+                                if (isC1Played && isC2played)
+                                {
+                                    isC1Played = false;
+                                    isC2played = false;
+
+                                    this.turn = 'w';
+                                    theIndexOfTheChosenTriangle = 100;
+                                    didUserChooseWhereToPlayFrom = false;
+                                    areTheCubesThrown = false;
+                                }
                             }
                         }
                         else if (i == theIndexAfterTheMoveWithCube(theIndexOfTheChosenTriangle, n2, this.turn) && !isC2played)
                         {
-                            board[i].addStone(board[theIndexOfTheChosenTriangle].pullStone());
-                            isC2played = true;
-                            didUserChooseWhereToPlayFrom = false;
-                            theIndexOfTheChosenTriangle = 100;
-                            if (isC1Played && isC2played)
+                            if (board[i].getState() == 'e' || board[i].getState() == 'b' || (board[i].getState() == 'w' && board[i].getStack().Count == 1))
                             {
-                                isC1Played = false;
-                                isC2played = false;
-
-                                this.turn = 'w';
-                                theIndexOfTheChosenTriangle = 100;
+                                if (board[i].getState() == 'w' && board[i].getStack().Count == 1)
+                                {
+                                    whitePrison.addStone(board[i].pullStone());
+                                    isWhiteEaten = true;
+                                }
+                                board[i].addStone(board[theIndexOfTheChosenTriangle].pullStone());
+                                isC2played = true;
                                 didUserChooseWhereToPlayFrom = false;
-                                areTheCubesThrown = false;
+                                theIndexOfTheChosenTriangle = 100;
+                                if (isC1Played && isC2played)
+                                {
+                                    isC1Played = false;
+                                    isC2played = false;
+
+                                    this.turn = 'w';
+                                    theIndexOfTheChosenTriangle = 100;
+                                    didUserChooseWhereToPlayFrom = false;
+                                    areTheCubesThrown = false;
+                                }
                             }
                         }
 
@@ -691,61 +828,7 @@ namespace Shesh_Besh
                     }
                 }
             }
-            /*if (this.turn == 'b' && !areTheCubesThrown && !didUserChooseWhereToPlayFrom)
-            {
-                if (r2Roll.didUserTouchMe((int)e.GetX(), (int)e.GetY()))
-                {
-                    int[] arr = r1Roll.activate(this.context);
-                    this.n1 = arr[0];
-                    this.n2 = arr[1];
-                    areTheCubesThrown = true;
-
-                }
-
-
-            }
-            if (this.turn == 'b' && areTheCubesThrown && !didUserChooseWhereToPlayFrom)
-            {
-                for (int i = 0; i < 24; i++)
-                {
-                    if (board[i].didUserTouchMe((int)e.GetX(), (int)e.GetY()) && board[i].getState() == 'b')
-                    {
-                        theIndexOfTheChosenTriangle = i;
-                        didUserChooseWhereToPlayFrom = true;
-
-                    }
-                }
-
-
-            }
-
-            if (this.turn == 'b' && didUserChooseWhereToPlayFrom)
-            {
-                for (int i = 0; i < 24; i++)
-                {
-                    if (board[i].didUserTouchMe((int)e.GetX(), (int)e.GetY()))
-                    {
-                        if (i == theIndexOfTheChosenTriangle + n1)
-                        {
-                            board[i].addStone(board[theIndexOfTheChosenTriangle].pullStone());
-                            this.turn = 'w';
-                            theIndexOfTheChosenTriangle = -1;
-                            didUserChooseWhereToPlayFrom = false;
-                            areTheCubesThrown = false;
-                        }
-                        if (i == theIndexOfTheChosenTriangle + n2)
-                        {
-                            board[i].addStone(board[theIndexOfTheChosenTriangle].pullStone());
-                            this.turn = 'w';
-                            theIndexOfTheChosenTriangle = -1;
-                            didUserChooseWhereToPlayFrom = false;
-                            areTheCubesThrown = false;
-                        }
-
-
-                    }
-                }
-            }*/
+            
             // end of the check of the black turn-----------------------------------------------------------
 
             return true;

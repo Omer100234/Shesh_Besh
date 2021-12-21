@@ -18,6 +18,7 @@ namespace Shesh_Besh
         private Color color;
         private int posX, lastPosX;
         private int posY, lastPosY;
+        bool doesItNeedToBeDrawn;
         public Stone(Color c, int posX, int posY)
         {
             this.color = c;
@@ -26,6 +27,18 @@ namespace Shesh_Besh
             this.posY = posY;
             this.lastPosX = posX;
             this.lastPosY = posY;
+            doesItNeedToBeDrawn = true;
+        }
+
+
+        public bool doesStoneNeedToBeDrawn()
+        {
+            return doesItNeedToBeDrawn;
+        }
+
+        public void changeDoesStoneNeedToBeDrawn(bool b)
+        {
+            this.doesItNeedToBeDrawn = b;
         }
         
         public Color GetColor()

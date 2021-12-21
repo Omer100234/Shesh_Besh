@@ -25,7 +25,12 @@ namespace Shesh_Besh
 
             fl1 = (FrameLayout)FindViewById(Resource.Id.fl1);
             fl1.AddView(b1v1);
+
+            
         }
-        
+
+       
+
+
     }
 }
