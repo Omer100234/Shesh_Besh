@@ -10,5 +10,9 @@
         android:layout_height="100dp"
         android:id="@+id/sv1"
         />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:id="@+id/menubt1"/>
 
 </LinearLayout>

@@ -15,6 +15,8 @@ namespace Shesh_Besh
     [Activity(Label = "b1v1Activity")]
     public class b1v1Activity : Activity
     {
+        
+
         Board1v1 b1v1;
         FrameLayout fl1;
         protected override void OnCreate(Bundle savedInstanceState)
@@ -29,7 +31,10 @@ namespace Shesh_Besh
             
         }
 
-       
+        
+
+
+
 
 
     }

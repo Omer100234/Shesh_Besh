@@ -35,10 +35,12 @@ namespace Shesh_Besh
         bool didUserChooseWhereToPlayFrom;
         bool areTheCubesThrown, isC1Played, isC2played;
         bool isBlackEaten, isWhiteEaten;
+        bool isTurnADouble;
 
 
         public Board1v1(Context context, char igs, Color c1, Color c2) : base(context)
         {
+            this.isTurnADouble = false;
             this.isWhiteEaten = false;
             this.isBlackEaten = false;
             this.theIndexOfTheChosenTriangle = 100;
@@ -113,7 +115,6 @@ namespace Shesh_Besh
             }
 
             //black prison index will be 32
-            // white prison index will be 31
             if (theIndexOfTheChosenTriangle == 32)
             {
                 Point ptp1, ptp2, ptp3;
@@ -370,6 +371,51 @@ namespace Shesh_Besh
                 }
             }
             int counter = 0;
+
+            for (int i = 0; i < 5; i++)
+            {
+                board[6].addStone(stones[counter]);
+                counter++;
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                board[4].addStone(stones[counter]);
+                counter++;
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                board[7].addStone(stones[counter]);
+                counter++;
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                board[10].addStone(stones[counter]);
+                counter++;
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                board[19].addStone(stones[counter]);
+                counter++;
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                board[23].addStone(stones[counter]);
+                counter++;
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                board[16].addStone(stones[counter]);
+                counter++;
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                board[18].addStone(stones[counter]);
+                counter++;
+            }
+
+
+
+            /* disribute for game------------------------
             for(int i=0;i<5;i++)
             {
                 board[6].addStone(stones[counter]);
@@ -409,7 +455,7 @@ namespace Shesh_Besh
             {
                 board[18].addStone(stones[counter]);
                 counter++;
-            }
+            } */ // end of distribute for game
         }
 
         private void drawMenu(Canvas canvas)
@@ -556,6 +602,10 @@ namespace Shesh_Besh
                     this.n2 = arr[1];
                     areTheCubesThrown = true;
                     didThePlayHappenInThisVeriationOfTheLoop = true;
+                    if(this.n1 == this.n2)
+                    {
+                        isTurnADouble = true;
+                    }
                 }
                
 
@@ -602,7 +652,7 @@ namespace Shesh_Besh
                                     isC1Played = true;
                                     didUserChooseWhereToPlayFrom = false;
                                     theIndexOfTheChosenTriangle = 100;
-                                    if (isC1Played && isC2played)
+                                    if (isC1Played && isC2played && !isTurnADouble)
                                     {
                                         isC1Played = false;
                                         isC2played = false;
@@ -611,6 +661,14 @@ namespace Shesh_Besh
                                         theIndexOfTheChosenTriangle = 100;
                                         didUserChooseWhereToPlayFrom = false;
                                         areTheCubesThrown = false;
+                                    }
+                                    if (isC1Played && isC2played && isTurnADouble)
+                                    {
+                                        isC1Played = false;
+                                        isC2played = false;
+                                        theIndexOfTheChosenTriangle = 100;
+                                        didUserChooseWhereToPlayFrom = false;
+                                        isTurnADouble = false;
                                     }
                                 }
 
@@ -628,7 +686,7 @@ namespace Shesh_Besh
                                     isC2played = true;
                                     didUserChooseWhereToPlayFrom = false;
                                     theIndexOfTheChosenTriangle = 100;
-                                    if (isC1Played && isC2played)
+                                    if (isC1Played && isC2played && !isTurnADouble)
                                     {
                                         isC1Played = false;
                                         isC2played = false;
@@ -637,6 +695,14 @@ namespace Shesh_Besh
                                         theIndexOfTheChosenTriangle = 100;
                                         didUserChooseWhereToPlayFrom = false;
                                         areTheCubesThrown = false;
+                                    }
+                                    if (isC1Played && isC2played && isTurnADouble)
+                                    {
+                                        isC1Played = false;
+                                        isC2played = false;
+                                        theIndexOfTheChosenTriangle = 100;
+                                        didUserChooseWhereToPlayFrom = false;
+                                        isTurnADouble = false;
                                     }
                                 }
 
@@ -657,10 +723,7 @@ namespace Shesh_Besh
                         didThePlayHappenInThisVeriationOfTheLoop = true;
                         
                         theIndexOfTheChosenTriangle = 31;
-                        if (theIndexOfTheChosenTriangle ==31)
-                        {
-                            Toast.MakeText(this.context, "it is 31", ToastLength.Short).Show();
-                        }
+                        
                     }
                     if(didUserChooseWhereToPlayFrom && !didThePlayHappenInThisVeriationOfTheLoop)
                     {
@@ -681,17 +744,25 @@ namespace Shesh_Besh
                                         isC1Played = true;
                                         didUserChooseWhereToPlayFrom = false;
                                         theIndexOfTheChosenTriangle = 100;
-                                        if (isC1Played && isC2played)
-                                        {
-                                            isC1Played = false;
-                                            isC2played = false;
+                                    if (isC1Played && isC2played && !isTurnADouble)
+                                    {
+                                        isC1Played = false;
+                                        isC2played = false;
 
-                                            this.turn = 'b';
-                                            theIndexOfTheChosenTriangle = 100;
-                                            didUserChooseWhereToPlayFrom = false;
-                                            areTheCubesThrown = false;
-                                        }
-                                        if (whitePrison.getStack().Count == 0)
+                                        this.turn = 'b';
+                                        theIndexOfTheChosenTriangle = 100;
+                                        didUserChooseWhereToPlayFrom = false;
+                                        areTheCubesThrown = false;
+                                    }
+                                    if (isC1Played && isC2played && isTurnADouble)
+                                    {
+                                        isC1Played = false;
+                                        isC2played = false;
+                                        theIndexOfTheChosenTriangle = 100;
+                                        didUserChooseWhereToPlayFrom = false;
+                                        isTurnADouble = false;
+                                    }
+                                    if (whitePrison.getStack().Count == 0)
                                         {
                                             isWhiteEaten = false;
                                         }
@@ -707,20 +778,28 @@ namespace Shesh_Besh
                                         isC2played = true;
                                         didUserChooseWhereToPlayFrom = false;
                                         theIndexOfTheChosenTriangle = 100;
-                                        if (isC1Played && isC2played)
-                                        {
-                                            isC1Played = false;
-                                            isC2played = false;
-
-                                            this.turn = 'b';
-                                            theIndexOfTheChosenTriangle = 100;
-                                            didUserChooseWhereToPlayFrom = false;
-                                            areTheCubesThrown = false;
-                                        }
-                                        if (whitePrison.getStack().Count == 0)
-                                        {
-                                            isWhiteEaten = false;
-                                        }
+                                         if (isC1Played && isC2played && !isTurnADouble)
+                                         {
+                                              isC1Played = false;
+                                              isC2played = false;
+    
+                                              this.turn = 'b';
+                                               theIndexOfTheChosenTriangle = 100;
+                                               didUserChooseWhereToPlayFrom = false;
+                                              areTheCubesThrown = false;
+                                          }
+                                         if (isC1Played && isC2played && isTurnADouble)
+                                         {
+                                               isC1Played = false;
+                                               isC2played = false;
+                                               theIndexOfTheChosenTriangle = 100;
+                                               didUserChooseWhereToPlayFrom = false;
+                                               isTurnADouble = false;
+                                         }
+                                         if (whitePrison.getStack().Count == 0)
+                                             {
+                                                  isWhiteEaten = false;
+                                                     }
                                     }
                                 }
                             
@@ -743,6 +822,10 @@ namespace Shesh_Besh
                     this.n2 = arr[1];
                     areTheCubesThrown = true;
                     didThePlayHappenInThisVeriationOfTheLoop = true;
+                    if (this.n1 == this.n2)
+                    {
+                        isTurnADouble = true;
+                    }
                 }
 
 
@@ -789,7 +872,7 @@ namespace Shesh_Besh
                                     isC1Played = true;
                                     didUserChooseWhereToPlayFrom = false;
                                     theIndexOfTheChosenTriangle = 100;
-                                    if (isC1Played && isC2played)
+                                    if (isC1Played && isC2played && !isTurnADouble)
                                     {
                                         isC1Played = false;
                                         isC2played = false;
@@ -798,6 +881,14 @@ namespace Shesh_Besh
                                         theIndexOfTheChosenTriangle = 100;
                                         didUserChooseWhereToPlayFrom = false;
                                         areTheCubesThrown = false;
+                                    }
+                                    if (isC1Played && isC2played && isTurnADouble)
+                                    {
+                                        isC1Played = false;
+                                        isC2played = false;
+                                        theIndexOfTheChosenTriangle = 100;
+                                        didUserChooseWhereToPlayFrom = false;
+                                        isTurnADouble = false;
                                     }
                                 }
 
@@ -815,7 +906,7 @@ namespace Shesh_Besh
                                     isC2played = true;
                                     didUserChooseWhereToPlayFrom = false;
                                     theIndexOfTheChosenTriangle = 100;
-                                    if (isC1Played && isC2played)
+                                    if (isC1Played && isC2played && !isTurnADouble)
                                     {
                                         isC1Played = false;
                                         isC2played = false;
@@ -824,6 +915,14 @@ namespace Shesh_Besh
                                         theIndexOfTheChosenTriangle = 100;
                                         didUserChooseWhereToPlayFrom = false;
                                         areTheCubesThrown = false;
+                                    }
+                                    if (isC1Played && isC2played && isTurnADouble)
+                                    {
+                                        isC1Played = false;
+                                        isC2played = false;
+                                        theIndexOfTheChosenTriangle = 100;
+                                        didUserChooseWhereToPlayFrom = false;
+                                        isTurnADouble = false;
                                     }
                                 }
 
@@ -868,7 +967,7 @@ namespace Shesh_Besh
                                     isC1Played = true;
                                     didUserChooseWhereToPlayFrom = false;
                                     theIndexOfTheChosenTriangle = 100;
-                                    if (isC1Played && isC2played)
+                                    if (isC1Played && isC2played && !isTurnADouble)
                                     {
                                         isC1Played = false;
                                         isC2played = false;
@@ -877,6 +976,14 @@ namespace Shesh_Besh
                                         theIndexOfTheChosenTriangle = 100;
                                         didUserChooseWhereToPlayFrom = false;
                                         areTheCubesThrown = false;
+                                    }
+                                    if (isC1Played && isC2played && isTurnADouble)
+                                    {
+                                        isC1Played = false;
+                                        isC2played = false;
+                                        theIndexOfTheChosenTriangle = 100;
+                                        didUserChooseWhereToPlayFrom = false;
+                                        isTurnADouble = false;
                                     }
                                     if (blackPrison.getStack().Count == 0)
                                     {
@@ -894,7 +1001,7 @@ namespace Shesh_Besh
                                     isC2played = true;
                                     didUserChooseWhereToPlayFrom = false;
                                     theIndexOfTheChosenTriangle = 100;
-                                    if (isC1Played && isC2played)
+                                    if (isC1Played && isC2played && !isTurnADouble)
                                     {
                                         isC1Played = false;
                                         isC2played = false;
@@ -903,6 +1010,15 @@ namespace Shesh_Besh
                                         theIndexOfTheChosenTriangle = 100;
                                         didUserChooseWhereToPlayFrom = false;
                                         areTheCubesThrown = false;
+                                        
+                                    }
+                                    if (isC1Played && isC2played && isTurnADouble)
+                                    {
+                                        isC1Played = false;
+                                        isC2played = false;
+                                        theIndexOfTheChosenTriangle = 100;
+                                        didUserChooseWhereToPlayFrom = false;
+                                        isTurnADouble = false;
                                     }
                                     if (blackPrison.getStack().Count == 0)
                                     {

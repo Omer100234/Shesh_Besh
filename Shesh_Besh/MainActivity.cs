@@ -14,8 +14,9 @@ namespace Shesh_Besh
     {
         Dialog d;
         
-        Button b1, b2 , b3;
+        Button b1, b2 , b3, menub1;
         SeekBar sb1;
+        public static bool hasMusicStarted;
         public static MyService ms1;
         public static Intent intent;
         protected override void OnCreate(Bundle savedInstanceState)
@@ -39,9 +40,10 @@ namespace Shesh_Besh
             b3.Click += B3_Click;
 
             intent = new Intent(this, typeof(MyService));
-            
+
             StartService(intent);
         }
+        
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater.Inflate(Resource.Menu.XMLFile1, menu);
@@ -58,17 +60,26 @@ namespace Shesh_Besh
                 d.SetTitle("submit");
                 d.SetCancelable(false);
                 sb1 = (SeekBar)d.FindViewById(Resource.Id.sv1);
+                menub1 = (Button)d.FindViewById(Resource.Id.menubt1);
                 d.Show();
-                sb1.Drag += Sb1_Drag;
+                menub1.Click += B1_Click1;
+                sb1.ProgressChanged += Sb1_ProgressChanged;
             }
             
             return true;
         }
 
-        private void Sb1_Drag(object sender, View.DragEventArgs e)
+        private void Sb1_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
             MyService.changeVolume(sb1.Progress);
         }
+
+        private void B1_Click1(object sender, System.EventArgs e)
+        {
+            d.Dismiss();
+        }
+
+        
 
         
         private void B2_Click(object sender, System.EventArgs e)
@@ -88,15 +99,6 @@ namespace Shesh_Besh
             Intent intent = new Intent(this, typeof(ba1Activity));
             StartActivityForResult(intent, 0);
         }
-
-        
-
-        protected override void OnDestroy()
-        {
-            StopService(intent);
-            base.OnDestroy();
-        }
-
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
