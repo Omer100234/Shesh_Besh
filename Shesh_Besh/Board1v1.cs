@@ -22,8 +22,10 @@ namespace Shesh_Besh
         Color c1, c2, sc1, sc2;
         PauseRect r1Pause, r2Pause;
         RollRect r1Roll, r2Roll;
+        PulloutRect poRect;
         int n1, n2;
         char turn;
+        char gameState;
         int theIndexOfTheChosenTriangle;
         Cell[] board;
         Rectangle[] myMenu;
@@ -36,6 +38,7 @@ namespace Shesh_Besh
         bool areTheCubesThrown, isC1Played, isC2played;
         bool isBlackEaten, isWhiteEaten;
         bool isTurnADouble;
+        bool canUserPullout;
 
 
         public Board1v1(Context context, char igs, Color c1, Color c2) : base(context)
@@ -74,6 +77,7 @@ namespace Shesh_Besh
             this.turn = 'w';
             areTheCubesThrown = false;
             this.stones = new Stone[30];
+            this.gameState = 'N';
             
 
 
@@ -89,9 +93,7 @@ namespace Shesh_Besh
             }
             this.p.Color = Color.BurlyWood;
             canvas.DrawRect(0, 0, canvas.Width, canvas.Height, this.p);
-            
-                highlighter(canvas);
-           
+            highlighter(canvas);
             drawBoard(canvas);
             drawMenu(canvas);
             drawStones(canvas);
@@ -162,6 +164,15 @@ namespace Shesh_Besh
 
         private void setHeights(Canvas canvas)
         {
+            // poRect set --------------------
+
+            int poy1 = canvas.Height * 7 / 15 + 15;
+            int poy2 = canvas.Height * 8 / 15 - 15;
+            int d = poy2 - poy1;
+            int pox1 = (canvas.Width - d) / 2;
+            int pox2 = (canvas.Width + d) / 2;
+            poRect = new PulloutRect(pox1, poy1, pox2, poy2, context);
+            // end of poRect set----------------
 
             int alt = 2;
             int y = 0;
@@ -355,6 +366,7 @@ namespace Shesh_Besh
             this.p.Color = Color.Black;
             canvas.DrawLine(0, y, canvas.Width, y, p);
             canvas.DrawLine(0, canvas.Height / 15, canvas.Width, canvas.Height / 15, p);
+            
         }
 
         private void distribute()
@@ -460,8 +472,9 @@ namespace Shesh_Besh
 
         private void drawMenu(Canvas canvas)
         {
-            
 
+            this.p.Color = Color.Gray;
+            poRect.DrawRectangle(canvas, this.p);
             for (int i=0;i<4;i++)
             {
                 this.p.Color = Color.Gray;
@@ -473,6 +486,7 @@ namespace Shesh_Besh
             canvas.DrawLine(0, canvas.Height * 7 / 15, canvas.Width, canvas.Height * 7 / 15, p);
             canvas.DrawLine(0, canvas.Height * 8 / 15, canvas.Width, canvas.Height * 8 / 15, p);
             canvas.DrawLine(0, canvas.Height * 14 / 15, canvas.Width, canvas.Height * 14 / 15, p);
+            
 
 
 
@@ -576,6 +590,109 @@ namespace Shesh_Besh
             return index;
         }
 
+        public bool checkForPullout()
+        {
+            if (this.turn == 'w')
+            {
+                if(!isWhiteEaten)
+                {
+                    for (int i=0;i<6;i++)
+                    {
+                        if(board[i].getState() == 'w')
+                        {
+                            return false;
+                        }
+                    }
+                    for(int i = 12; i < 24; i++) 
+                    {
+                        if (board[i].getState() == 'w')
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            if (this.turn == 'b')
+            {
+                if (!isBlackEaten)
+                {
+                    for (int i = 0; i < 18; i++)
+                    {
+                        if (board[i].getState() == 'b')
+                        {
+                            return false;
+                        }
+                    }
+                    
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            return false;
+        }
+
+
+
+        public bool canUserPulloutThisStone(int n, char t)
+        {
+            if(t == 'w')
+            {
+                if (12-n == theIndexOfTheChosenTriangle)
+                {
+                    return true;
+                }
+                else if(theIndexOfTheChosenTriangle<12-n)
+                {
+                    return false;
+                }
+                else
+                {
+                    for (int i=6; i<theIndexOfTheChosenTriangle;i++)
+                    {
+                        if(board[i].getState() == 'w')
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                
+            }
+            else
+            {
+                if (24 - n == theIndexOfTheChosenTriangle)
+                {
+                    return true;
+                }
+                else if (theIndexOfTheChosenTriangle < 24 - n)
+                {
+                    return false;
+                }
+                else
+                {
+                    for (int i = 18; i < theIndexOfTheChosenTriangle; i++)
+                    {
+                        if (board[i].getState() == 'b')
+                        {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+
+
         public override bool OnTouchEvent(MotionEvent e)
         {
             didThePlayHappenInThisVeriationOfTheLoop = false;
@@ -606,6 +723,7 @@ namespace Shesh_Besh
                     {
                         isTurnADouble = true;
                     }
+                    
                 }
                
 
@@ -629,10 +747,56 @@ namespace Shesh_Besh
 
                 if (this.turn == 'w' && didUserChooseWhereToPlayFrom && !didThePlayHappenInThisVeriationOfTheLoop)
                 {
+                    if (poRect.didUserTouchMe((int)e.GetX(), (int)e.GetY()) && checkForPullout())
+                    {
+                        if (canUserPulloutThisStone(this.n1, this.turn) && !isC1Played)
+                        {
+                            poRect.activate(board, theIndexOfTheChosenTriangle, turn);
+                            isC1Played = true;
+                            didUserChooseWhereToPlayFrom = false;
+                            theIndexOfTheChosenTriangle = 100;
+                            if (isC1Played && isC2played && !isTurnADouble)
+                            {
+                                isC1Played = false;
+                                isC2played = false;
+
+                                this.turn = 'b';
+                                areTheCubesThrown = false;
+                            }
+                            if (isC1Played && isC2played && isTurnADouble)
+                            {
+                                isC1Played = false;
+                                isC2played = false;
+                                isTurnADouble = false;
+                            }
+                        }
+                        if (canUserPulloutThisStone(this.n2, this.turn) && !isC2played)
+                        {
+                            poRect.activate(board, theIndexOfTheChosenTriangle, turn);
+                            isC2played = true;
+                            didUserChooseWhereToPlayFrom = false;
+                            theIndexOfTheChosenTriangle = 100;
+                            if (isC1Played && isC2played && !isTurnADouble)
+                            {
+                                isC1Played = false;
+                                isC2played = false;
+
+                                this.turn = 'b';
+                                areTheCubesThrown = false;
+                            }
+                            if (isC1Played && isC2played && isTurnADouble)
+                            {
+                                isC1Played = false;
+                                isC2played = false;
+                                isTurnADouble = false;
+                            }
+                        }
+                    }
                     for (int i = 0; i < 24; i++)
                     {
                         if (board[i].didUserTouchMe((int)e.GetX(), (int)e.GetY()))
                         {
+                            
                             if (i == theIndexOfTheChosenTriangle && !didThePlayHappenInThisVeriationOfTheLoop && e.Action == MotionEventActions.Down)
                             {
                                 didUserChooseWhereToPlayFrom = false;
@@ -851,6 +1015,51 @@ namespace Shesh_Besh
                 {
                     for (int i = 0; i < 24; i++)
                     {
+                        if (poRect.didUserTouchMe((int)e.GetX(), (int)e.GetY()) && checkForPullout())
+                        {
+                            if (canUserPulloutThisStone(this.n1, this.turn) && !isC1Played)
+                            {
+                                poRect.activate(board, theIndexOfTheChosenTriangle, turn);
+                                isC1Played = true;
+                                didUserChooseWhereToPlayFrom = false;
+                                theIndexOfTheChosenTriangle = 100;
+                                if (isC1Played && isC2played && !isTurnADouble)
+                                {
+                                    isC1Played = false;
+                                    isC2played = false;
+
+                                    this.turn = 'w';
+                                    areTheCubesThrown = false;
+                                }
+                                if (isC1Played && isC2played && isTurnADouble)
+                                {
+                                    isC1Played = false;
+                                    isC2played = false;
+                                    isTurnADouble = false;
+                                }
+                            }
+                            if (canUserPulloutThisStone(this.n2, this.turn) && !isC2played)
+                            {
+                                poRect.activate(board, theIndexOfTheChosenTriangle, turn);
+                                isC2played = true;
+                                didUserChooseWhereToPlayFrom = false;
+                                theIndexOfTheChosenTriangle = 100;
+                                if (isC1Played && isC2played && !isTurnADouble)
+                                {
+                                    isC1Played = false;
+                                    isC2played = false;
+
+                                    this.turn = 'w';
+                                    areTheCubesThrown = false;
+                                }
+                                if (isC1Played && isC2played && isTurnADouble)
+                                {
+                                    isC1Played = false;
+                                    isC2played = false;
+                                    isTurnADouble = false;
+                                }
+                            }
+                        }
                         if (board[i].didUserTouchMe((int)e.GetX(), (int)e.GetY()))
                         {
                             if (i == theIndexOfTheChosenTriangle && !didThePlayHappenInThisVeriationOfTheLoop && e.Action == MotionEventActions.Down)

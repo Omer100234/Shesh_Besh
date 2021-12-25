@@ -71,6 +71,7 @@
     <Compile Include="myHandler.cs" />
     <Compile Include="myService.cs" />
     <Compile Include="PauseRect.cs" />
+    <Compile Include="PulloutRect.cs" />
     <Compile Include="Rectangle.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
