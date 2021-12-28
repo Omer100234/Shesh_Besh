@@ -20,8 +20,23 @@ namespace Shesh_Besh
         {
             whiteWinningCell = new Cell();
             blackWinningCell = new Cell();
+            whiteWinningCell.setCellY(-3000);
+            blackWinningCell.setCellY(-3000);
 
 
+        }
+
+        public char getWinner()
+        {
+            if(whiteWinningCell.getStack().Count==15)
+            {
+                return 'W';
+            }
+            if (blackWinningCell.getStack().Count==15)
+            {
+                return 'B';
+            }
+            return 'N';
         }
         public char activate(Cell[] arr, int index, char turn)
         {

@@ -16,55 +16,43 @@ namespace Shesh_Besh
     [Service]
     public class MyService : Service
     {
-        static AudioManager am;
-        static MediaPlayer mp;
+        MediaPlayer mp; // media player which plays the music
+        MusicPlayerBroadcastReciever musicPlayerBroadcast; // broadcast reciever, is registered with the media player an plays the music according to the user
+
+        public static bool musicStopped = false;
         public override void OnCreate()
         {
             base.OnCreate();
+
+            mp = MediaPlayer.Create(this, Resource.Raw.song);
+            musicPlayerBroadcast = new MusicPlayerBroadcastReciever(mp);
+
+            IntentFilter intentFilter = new IntentFilter("music");
+            RegisterReceiver(musicPlayerBroadcast, intentFilter);
         }
         public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
         {
-            Thread t = new Thread(Run);
+            Intent i = new Intent("music");
+            i.PutExtra("action", 1);
+            SendBroadcast(i);
+
+
+            // thread which stops the service if music is stopped for a long time, user left the app
+            Thread t = new Thread(RunUntilMusicStopped);
             t.Start();
+
             return base.OnStartCommand(intent, flags, startId);
         }
+
+        private void RunUntilMusicStopped()
+        {
+            while (!musicStopped) ;
+            StopSelf();
+        }
+
         public override IBinder OnBind(Intent intent)
         {
             return null;
-        }
-
-        private void Run()
-        {
-            if (!MainActivity.hasMusicStarted)
-            {
-                mp = MediaPlayer.Create(this, Resource.Raw.song);
-                MainActivity.hasMusicStarted = true;
-                am = (AudioManager)GetSystemService(Context.AudioService);
-                int max = am.GetStreamMaxVolume(Stream.Music);
-                
-                am.SetStreamVolume(Stream.Music, max/2, 0);
-            }
-            mp.Start();
-        }
-
-        public static void ResumeMusic()
-        {
-            mp.Start();
-        }
-
-        public static void PauseMusic()
-        {
-            mp.Pause();
-        }
-        public static void StopMusic()
-        {
-            mp.Stop();
-            MainActivity.hasMusicStarted = false;
-        }
-
-        public static void changeVolume(int x)
-        {
-            am.SetStreamVolume(Stream.Music, x, 0);
         }
     }
 }

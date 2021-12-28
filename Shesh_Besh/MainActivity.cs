@@ -43,7 +43,34 @@ namespace Shesh_Besh
 
             StartService(intent);
         }
-        
+
+        protected override void OnPause()
+        {
+            PauseMusic();
+            base.OnPause();
+        }
+
+        protected override void OnResume()
+        {
+            ResumeMusic();
+            base.OnResume();
+        }
+
+
+        public void ResumeMusic() // move to mainactivity
+        {
+            Intent i = new Intent("music");
+            i.PutExtra("action", 1); // 1 to turn on
+            SendBroadcast(i);
+        }
+
+        public void PauseMusic() // move to main
+        {
+            Intent i = new Intent("music");
+            i.PutExtra("action", 0); // 0 to turn on
+            SendBroadcast(i);
+        }
+
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater.Inflate(Resource.Menu.XMLFile1, menu);
@@ -71,7 +98,7 @@ namespace Shesh_Besh
 
         private void Sb1_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
-            MyService.changeVolume(sb1.Progress);
+            
         }
 
         private void B1_Click1(object sender, System.EventArgs e)

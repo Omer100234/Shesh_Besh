@@ -31,7 +31,34 @@ namespace Shesh_Besh
             
         }
 
-        
+        protected override void OnPause()
+        {
+            PauseMusic();
+            base.OnPause();
+        }
+
+        protected override void OnResume()
+        {
+            ResumeMusic();
+            base.OnResume();
+        }
+
+
+        public void ResumeMusic() // move to mainactivity
+        {
+            Intent i = new Intent("music");
+            i.PutExtra("action", 1); // 1 to turn on
+            SendBroadcast(i);
+        }
+
+        public void PauseMusic() // move to main
+        {
+            Intent i = new Intent("music");
+            i.PutExtra("action", 0); // 0 to turn on
+            SendBroadcast(i);
+        }
+
+
 
 
 

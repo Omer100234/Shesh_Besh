@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="b1v1Activity.cs" />
     <Compile Include="ba1Activity.cs" />
+    <Compile Include="bcr.cs" />
     <Compile Include="Board1v1.cs" />
     <Compile Include="BoardAI.cs" />
     <Compile Include="Cell.cs" />

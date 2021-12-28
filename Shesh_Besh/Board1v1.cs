@@ -38,11 +38,13 @@ namespace Shesh_Besh
         bool areTheCubesThrown, isC1Played, isC2played;
         bool isBlackEaten, isWhiteEaten;
         bool isTurnADouble;
-        bool canUserPullout;
+        bool isGameWon;
 
 
         public Board1v1(Context context, char igs, Color c1, Color c2) : base(context)
         {
+            this.isGameWon = false;
+
             this.isTurnADouble = false;
             this.isWhiteEaten = false;
             this.isBlackEaten = false;
@@ -84,22 +86,36 @@ namespace Shesh_Besh
         }
         protected override void OnDraw(Canvas canvas)
         {
-            
-            if (!this.isSet)
+            if (!isGameWon)
             {
-                setHeights(canvas);
-                distribute();
-                this.isSet = true;
+                if (!this.isSet)
+                {
+                    setHeights(canvas);
+                    distribute();
+                    this.isSet = true;
+                }
+                this.p.Color = Color.BurlyWood;
+                canvas.DrawRect(0, 0, canvas.Width, canvas.Height, this.p);
+                highlighter(canvas);
+                drawBoard(canvas);
+                drawMenu(canvas);
+                drawStones(canvas);
+                this.p.Color = Color.Black;
+                checkNumsForPrint(canvas);
             }
-            this.p.Color = Color.BurlyWood;
-            canvas.DrawRect(0, 0, canvas.Width, canvas.Height, this.p);
-            highlighter(canvas);
-            drawBoard(canvas);
-            drawMenu(canvas);
-            drawStones(canvas);
-            this.p.Color = Color.Black;
-            checkNumsForPrint(canvas);
-            
+            if(poRect.getWinner()!='N')
+            {
+                if (poRect.getWinner()=='W')
+                {
+                    canvas.DrawText("white won", 0, 0, p);
+                }
+                else
+                {
+                    canvas.DrawText("black won", 0, 0, p);
+
+                }
+                isGameWon = true;
+            }
 
             Invalidate();
         }
@@ -384,50 +400,8 @@ namespace Shesh_Besh
             }
             int counter = 0;
 
-            for (int i = 0; i < 5; i++)
-            {
-                board[6].addStone(stones[counter]);
-                counter++;
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                board[4].addStone(stones[counter]);
-                counter++;
-            }
-            for (int i = 0; i < 5; i++)
-            {
-                board[7].addStone(stones[counter]);
-                counter++;
-            }
-            for (int i = 0; i < 2; i++)
-            {
-                board[10].addStone(stones[counter]);
-                counter++;
-            }
-            for (int i = 0; i < 5; i++)
-            {
-                board[19].addStone(stones[counter]);
-                counter++;
-            }
-            for (int i = 0; i < 2; i++)
-            {
-                board[23].addStone(stones[counter]);
-                counter++;
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                board[16].addStone(stones[counter]);
-                counter++;
-            }
-            for (int i = 0; i < 5; i++)
-            {
-                board[18].addStone(stones[counter]);
-                counter++;
-            }
 
-
-
-            /* disribute for game------------------------
+            // disribute for game------------------------
             for(int i=0;i<5;i++)
             {
                 board[6].addStone(stones[counter]);
@@ -467,7 +441,7 @@ namespace Shesh_Besh
             {
                 board[18].addStone(stones[counter]);
                 counter++;
-            } */ // end of distribute for game
+            }  // end of distribute for game
         }
 
         private void drawMenu(Canvas canvas)
@@ -692,6 +666,73 @@ namespace Shesh_Besh
             }
         }
 
+        public bool DoesUserHaveAPossibleMove(int n)
+        {
+            if(this.turn == 'w')
+            {
+                if (isWhiteEaten)
+                {
+
+
+                    if ((board[24 - n].getState() == 'b' && board[24 - n].getStack().Count == 1) || board[24 - n].getState() == 'e' || board[24 - n].getState() == 'w')
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+
+
+                    for (int i = 0; i < 24; i++)
+                    {
+                        if (board[i].getState()=='w')
+                        {
+                            if ((board[theIndexAfterTheMoveWithCube(i,n,turn)].getState() == 'b' && board[theIndexAfterTheMoveWithCube(i, n, turn)].getStack().Count == 1) || board[theIndexAfterTheMoveWithCube(i, n, turn)].getState() == 'e' || board[theIndexAfterTheMoveWithCube(i, n, turn)].getState() == 'w')
+                            {
+                                return true;
+                            }
+                            
+                              
+                            
+                        }
+                    }
+                }
+                return false;
+            }
+            else
+            {
+                if (isBlackEaten)
+                {
+
+
+                    if ((board[12 - n].getState() == 'w' && board[12 - n].getStack().Count == 1) || board[12 - n].getState() == 'e' || board[12 - n].getState() == 'b')
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+
+
+                    for (int i = 0; i < 24; i++)
+                    {
+                        if (board[i].getState() == 'b')
+                        {
+                            if ((board[theIndexAfterTheMoveWithCube(i, n, turn)].getState() == 'w' && board[theIndexAfterTheMoveWithCube(i, n, turn)].getStack().Count == 1) || board[theIndexAfterTheMoveWithCube(i, n, turn)].getState() == 'e' || board[theIndexAfterTheMoveWithCube(i, n, turn)].getState() == 'b')
+                            {
+                                return true;
+                            }
+
+
+
+                        }
+                    }
+                }
+                return false;
+
+            }
+        }
+
 
         public override bool OnTouchEvent(MotionEvent e)
         {
@@ -728,10 +769,38 @@ namespace Shesh_Besh
                
 
             }
-            if (!isWhiteEaten && this.turn == 'w')
+            if (!isWhiteEaten && this.turn == 'w' && areTheCubesThrown)
             {
                 if (this.turn == 'w' && areTheCubesThrown && !didUserChooseWhereToPlayFrom && !didThePlayHappenInThisVeriationOfTheLoop)
                 {
+                    if (!isC1Played && !isC2played &&!checkForPullout() && areTheCubesThrown)
+                    {
+                        if(!(DoesUserHaveAPossibleMove(n1)||DoesUserHaveAPossibleMove(n2)))
+                        {
+                            areTheCubesThrown = false;
+                            this.turn = 'b';
+                            didThePlayHappenInThisVeriationOfTheLoop = true;
+                        }
+                    }
+                    if(!isC1Played && isC2played && !checkForPullout() && areTheCubesThrown)
+                    {
+                        if (!(DoesUserHaveAPossibleMove(n1)))
+                        {
+                            areTheCubesThrown = false;
+                            this.turn = 'b';
+                            didThePlayHappenInThisVeriationOfTheLoop = true;
+                        }
+                    }
+                    if (isC1Played && !isC2played && !checkForPullout() && areTheCubesThrown)
+                    {
+                        if (!(DoesUserHaveAPossibleMove(n2)))
+                        {
+                            areTheCubesThrown = false;
+                            this.turn = 'b';
+                            didThePlayHappenInThisVeriationOfTheLoop = true;
+                        }
+                    }
+
                     for (int i = 0; i < 24; i++)
                     {
                         if (board[i].didUserTouchMe((int)e.GetX(), (int)e.GetY()) && board[i].getState() == 'w' && e.Action == MotionEventActions.Down)
@@ -878,8 +947,35 @@ namespace Shesh_Besh
                     }
                 }
             }
-                if (isWhiteEaten && this.turn == 'w' && !didThePlayHappenInThisVeriationOfTheLoop)
+                if (isWhiteEaten && this.turn == 'w' && !didThePlayHappenInThisVeriationOfTheLoop && areTheCubesThrown)
                 {
+                    if (!isC1Played && !isC2played && !checkForPullout() && areTheCubesThrown)
+                    {
+                        if(!(DoesUserHaveAPossibleMove(n1)||DoesUserHaveAPossibleMove(n2)))
+                        {
+                            areTheCubesThrown = false;
+                            this.turn = 'b';
+                            didThePlayHappenInThisVeriationOfTheLoop = true;
+                        }
+                    }
+                    if(!isC1Played && isC2played && !checkForPullout() && areTheCubesThrown)
+                    {
+                        if (!(DoesUserHaveAPossibleMove(n1)))
+                        {
+                            areTheCubesThrown = false;
+                            this.turn = 'b';
+                            didThePlayHappenInThisVeriationOfTheLoop = true;
+                        }
+                    }
+                    if (isC1Played && !isC2played && !checkForPullout() && areTheCubesThrown)
+                    {
+                        if (!(DoesUserHaveAPossibleMove(n2)))
+                        {
+                            areTheCubesThrown = false;
+                            this.turn = 'b';
+                            didThePlayHappenInThisVeriationOfTheLoop = true;
+                        }
+                    }
                     if (whitePrison.didUserTouchMe((int)e.GetX(), (int)e.GetY()) && !didUserChooseWhereToPlayFrom)
                     {
                         
@@ -994,10 +1090,37 @@ namespace Shesh_Besh
 
 
             }
-            if (!isBlackEaten && this.turn == 'b')
+            if (!isBlackEaten && this.turn == 'b' && areTheCubesThrown)
             {
                 if (this.turn == 'b' && areTheCubesThrown && !didUserChooseWhereToPlayFrom && !didThePlayHappenInThisVeriationOfTheLoop)
                 {
+                    if (!isC1Played && !isC2played && !checkForPullout() && areTheCubesThrown)
+                    {
+                        if (!(DoesUserHaveAPossibleMove(n1) || DoesUserHaveAPossibleMove(n2)))
+                        {
+                            areTheCubesThrown = false;
+                            this.turn = 'w';
+                            didThePlayHappenInThisVeriationOfTheLoop = true;
+                        }
+                    }
+                    if (!isC1Played && isC2played && !checkForPullout() && areTheCubesThrown)
+                    {
+                        if (!(DoesUserHaveAPossibleMove(n1)))
+                        {
+                            areTheCubesThrown = false;
+                            this.turn = 'w';
+                            didThePlayHappenInThisVeriationOfTheLoop = true;
+                        }
+                    }
+                    if (isC1Played && !isC2played && !checkForPullout() && areTheCubesThrown)
+                    {
+                        if (!(DoesUserHaveAPossibleMove(n2)))
+                        {
+                            areTheCubesThrown = false;
+                            this.turn = 'w';
+                            didThePlayHappenInThisVeriationOfTheLoop = true;
+                        }
+                    }
                     for (int i = 0; i < 24; i++)
                     {
                         if (board[i].didUserTouchMe((int)e.GetX(), (int)e.GetY()) && board[i].getState() == 'b' && e.Action == MotionEventActions.Down)
@@ -1143,8 +1266,35 @@ namespace Shesh_Besh
                     }
                 }
             }
-            if (isBlackEaten && this.turn == 'b' && !didThePlayHappenInThisVeriationOfTheLoop)
+            if (isBlackEaten && this.turn == 'b' && !didThePlayHappenInThisVeriationOfTheLoop && areTheCubesThrown)
             {
+                if (!isC1Played && !isC2played && !checkForPullout() && areTheCubesThrown)
+                {
+                    if (!(DoesUserHaveAPossibleMove(n1) || DoesUserHaveAPossibleMove(n2)))
+                    {
+                        areTheCubesThrown = false;
+                        this.turn = 'w';
+                        didThePlayHappenInThisVeriationOfTheLoop = true;
+                    }
+                }
+                if (!isC1Played && isC2played && !checkForPullout() && areTheCubesThrown)
+                {
+                    if (!(DoesUserHaveAPossibleMove(n1)))
+                    {
+                        areTheCubesThrown = false;
+                        this.turn = 'w';
+                        didThePlayHappenInThisVeriationOfTheLoop = true;
+                    }
+                }
+                if (isC1Played && !isC2played && !checkForPullout() && areTheCubesThrown)
+                {
+                    if (!(DoesUserHaveAPossibleMove(n2)))
+                    {
+                        areTheCubesThrown = false;
+                        this.turn = 'w';
+                        didThePlayHappenInThisVeriationOfTheLoop = true;
+                    }
+                }
                 if (blackPrison.didUserTouchMe((int)e.GetX(), (int)e.GetY()) && !didUserChooseWhereToPlayFrom)
                 {
 
@@ -1152,10 +1302,7 @@ namespace Shesh_Besh
                     didThePlayHappenInThisVeriationOfTheLoop = true;
 
                     theIndexOfTheChosenTriangle = 32;
-                    if (theIndexOfTheChosenTriangle == 32)
-                    {
-                        Toast.MakeText(this.context, "it is 32", ToastLength.Short).Show();
-                    }
+                    
                 }
                 if (didUserChooseWhereToPlayFrom && !didThePlayHappenInThisVeriationOfTheLoop)
                 {
