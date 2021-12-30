@@ -19,6 +19,10 @@ namespace Shesh_Besh
         public static bool hasMusicStarted;
         public static MyService ms1;
         public static Intent intent;
+        int time;
+        char winner;
+        public static ISharedPreferences totals; 
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -40,8 +44,33 @@ namespace Shesh_Besh
             b3.Click += B3_Click;
 
             intent = new Intent(this, typeof(MyService));
-
+            
             StartService(intent);
+            totals = this.GetSharedPreferences("totals", FileCreationMode.Private);
+            time = Intent.GetIntExtra("timer", 0);
+            winner = Intent.GetCharExtra("winner", 'N');
+            if(time!=0)
+            {
+                Toast.MakeText(this, "time it took: " + time, ToastLength.Short).Show();
+            }
+            if (winner!='N')
+            {
+                var editor = totals.Edit();
+                int gp = totals.GetInt("gp", 0);
+                editor.PutInt("gp", gp + 1);
+                if (winner == 'W')
+                {
+                    int ww = totals.GetInt("ww", 0);
+                    editor.PutInt("ww", ww + 1);
+                }
+                else
+                {
+                    int bw = totals.GetInt("bw", 0);
+                    editor.PutInt("bw", bw + 1);
+                }
+                editor.Commit();
+
+            }
         }
 
         protected override void OnPause()
@@ -87,6 +116,7 @@ namespace Shesh_Besh
                 d.SetTitle("submit");
                 d.SetCancelable(false);
                 sb1 = (SeekBar)d.FindViewById(Resource.Id.sv1);
+                sb1.Progress = 50;
                 menub1 = (Button)d.FindViewById(Resource.Id.menubt1);
                 d.Show();
                 menub1.Click += B1_Click1;
@@ -98,7 +128,7 @@ namespace Shesh_Besh
 
         private void Sb1_ProgressChanged(object sender, SeekBar.ProgressChangedEventArgs e)
         {
-            
+            MyService.setVolume(sb1.Progress);
         }
 
         private void B1_Click1(object sender, System.EventArgs e)

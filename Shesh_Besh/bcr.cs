@@ -28,7 +28,7 @@ namespace Shesh_Besh
 
 
 
-            mp.SetVolume(1, 1);
+            
 
         }
 
@@ -49,7 +49,7 @@ namespace Shesh_Besh
             if (action == 1)
             {
                 mp.Start();
-                mp.SetVolume((float)0.3, (float)0.3);
+                
 
                 if (t != null && t.IsAlive)
                     t.Abort();

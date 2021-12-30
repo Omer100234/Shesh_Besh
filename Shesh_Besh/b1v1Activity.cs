@@ -10,13 +10,14 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
+
 namespace Shesh_Besh
 {
     [Activity(Label = "b1v1Activity")]
     public class b1v1Activity : Activity
     {
-        
-
+        MyHandler mh1;
+        static MyTimer mt1;
         Board1v1 b1v1;
         FrameLayout fl1;
         protected override void OnCreate(Bundle savedInstanceState)
@@ -27,8 +28,21 @@ namespace Shesh_Besh
 
             fl1 = (FrameLayout)FindViewById(Resource.Id.fl1);
             fl1.AddView(b1v1);
+            b1v1.winHandler += gys;
 
-            
+
+        }
+
+        
+        
+
+        
+        private void gys(object sender, EventArgs e)
+        {
+            Intent intent = new Intent(this, typeof(MainActivity));
+            intent.PutExtra("timer", b1v1.getTime());
+            intent.PutExtra("winner", b1v1.getWinner());
+            StartActivity(intent);
         }
 
         protected override void OnPause()

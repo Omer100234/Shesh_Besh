@@ -16,7 +16,7 @@ namespace Shesh_Besh
     [Service]
     public class MyService : Service
     {
-        MediaPlayer mp; // media player which plays the music
+        static MediaPlayer mp; // media player which plays the music
         MusicPlayerBroadcastReciever musicPlayerBroadcast; // broadcast reciever, is registered with the media player an plays the music according to the user
 
         public static bool musicStopped = false;
@@ -44,6 +44,10 @@ namespace Shesh_Besh
             return base.OnStartCommand(intent, flags, startId);
         }
 
+        public static void setVolume(float f)
+        {
+            mp.SetVolume(f/100, f/100);
+        }
         private void RunUntilMusicStopped()
         {
             while (!musicStopped) ;

@@ -21,7 +21,7 @@ namespace Shesh_Besh
         }
         public override void HandleMessage(Message msg)
         {
-            Toast.MakeText(context, "" + msg.Arg1, ToastLength.Long).Show();
+            
         }
     }
 }
