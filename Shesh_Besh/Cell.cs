@@ -16,7 +16,7 @@ namespace Shesh_Besh
     class Cell
     {
         Stack<Stone> stack;
-        int minheight=25;
+        int minheight;
         char state;
         int cellY;
         Point p1, p2, p3;
@@ -26,7 +26,7 @@ namespace Shesh_Besh
         {
             this.stack = new Stack<Stone>( );
             this.state = 'e';
-            
+            minheight = 25;
         }
 
        

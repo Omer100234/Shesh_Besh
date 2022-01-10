@@ -16,7 +16,7 @@ namespace Shesh_Besh
     class RollRect : Rectangle
     {
         MediaPlayer mp;
-        AudioManager am;
+        
         public RollRect(int l, int t, int r, int b, Context c) : base(l, t, r, b, c)
         {
             mp = MediaPlayer.Create(this.c, Resource.Raw.dice);
